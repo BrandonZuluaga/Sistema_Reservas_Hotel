@@ -1,0 +1,21 @@
+# Entorno y caches
+_pycache_/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv/
+venv/
+.env.*
+
+# Alembic
+/migrations/versions/_pycache_/
+/migrations/versions/*.pyc
+
+# Editor
+.vscode/
+.idea/
+.DS_Store
+
+# Black cache
+.cache/
