@@ -27,7 +27,7 @@ from ..base import AuditMixin, Base, UUIDPrimaryKeyMixin
 class User(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Usuario del sistema autenticable mediante contraseña hasheada."""
 
-    _tablename_ = "users"
+    __tablename__ = "users"
 
     username: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
@@ -43,7 +43,7 @@ class User(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class Role(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Rol de autorización simple (por ejemplo: admin, recepcionista)."""
 
-    _tablename_ = "roles"
+    __tablename__ = "roles"
 
     name: Mapped[str] = mapped_column(String(50), unique=True)
 
@@ -55,7 +55,7 @@ class Role(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class UserRole(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Tabla de asociación Usuario-Rol con id UUID y unicidad compuesta."""
 
-    _tablename_ = "user_roles"
+    __tablename__ = "user_roles"
 
     user_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), index=True
@@ -64,20 +64,20 @@ class UserRole(UUIDPrimaryKeyMixin, AuditMixin, Base):
         UUID(as_uuid=True), ForeignKey("roles.id", ondelete="CASCADE"), index=True
     )
 
-    _table_args_ = (UniqueConstraint("user_id", "role_id", name="uq_user_role_pair"),)
+    __table_args__ = (UniqueConstraint("user_id", "role_id", name="uq_user_role_pair"),)
 
 
 class Customer(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Cliente que realiza reservas."""
 
-    _tablename_ = "customers"
+    __tablename__ = "customers"
 
     full_name: Mapped[str] = mapped_column(String(120), index=True)
     document_id: Mapped[str] = mapped_column(String(40), index=True)
     phone: Mapped[Optional[str]] = mapped_column(String(30))
     email: Mapped[Optional[str]] = mapped_column(String(255))
 
-    _table_args_ = (UniqueConstraint("document_id", name="uq_customer_document"),)
+    __table_args__ = (UniqueConstraint("document_id", name="uq_customer_document"),)
 
     reservations: Mapped[List["Reservation"]] = relationship(back_populates="customer")
 
@@ -85,7 +85,7 @@ class Customer(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class RoomType(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Tipo de habitación con tarifa base."""
 
-    _tablename_ = "room_types"
+    __tablename__ = "room_types"
 
     name: Mapped[str] = mapped_column(String(50), unique=True)
     description: Mapped[Optional[str]] = mapped_column(String(255))
@@ -97,7 +97,7 @@ class RoomType(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class Room(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Habitación física del hotel."""
 
-    _tablename_ = "rooms"
+    __tablename__ = "rooms"
 
     number: Mapped[str] = mapped_column(String(10), unique=True, index=True)
     floor: Mapped[int] = mapped_column(Integer)
@@ -117,7 +117,7 @@ class Room(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class Amenity(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Amenidad disponible en habitaciones."""
 
-    _tablename_ = "amenities"
+    __tablename__ = "amenities"
 
     name: Mapped[str] = mapped_column(String(80), unique=True)
 
@@ -129,7 +129,7 @@ class Amenity(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class RoomAmenity(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Asociación entre habitaciones y amenidades con id UUID y unicidad compuesta."""
 
-    _tablename_ = "room_amenities"
+    __tablename__ = "room_amenities"
 
     room_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("rooms.id", ondelete="CASCADE"), index=True
@@ -138,7 +138,7 @@ class RoomAmenity(UUIDPrimaryKeyMixin, AuditMixin, Base):
         UUID(as_uuid=True), ForeignKey("amenities.id", ondelete="CASCADE"), index=True
     )
 
-    _table_args_ = (
+    __table_args__ = (
         UniqueConstraint("room_id", "amenity_id", name="uq_room_amenity_pair"),
     )
 
@@ -146,7 +146,7 @@ class RoomAmenity(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class Reservation(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Reserva de habitación con validaciones de rango de fechas."""
 
-    _tablename_ = "reservations"
+    __tablename__ = "reservations"
 
     customer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("customers.id", ondelete="RESTRICT")
@@ -159,7 +159,7 @@ class Reservation(UUIDPrimaryKeyMixin, AuditMixin, Base):
     status: Mapped[str] = mapped_column(String(20), default="confirmed")
     total_amount: Mapped[float] = mapped_column(Float, default=0.0)
 
-    _table_args_ = (
+    __table_args__ = (
         CheckConstraint("check_out > check_in", name="ck_reservation_dates"),
     )
 
@@ -171,7 +171,7 @@ class Reservation(UUIDPrimaryKeyMixin, AuditMixin, Base):
 class Payment(UUIDPrimaryKeyMixin, AuditMixin, Base):
     """Pago asociado a una reserva."""
 
-    _tablename_ = "payments"
+    __tablename__ = "payments"
 
     reservation_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("reservations.id", ondelete="CASCADE")

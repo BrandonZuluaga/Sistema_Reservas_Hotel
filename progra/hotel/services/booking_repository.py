@@ -21,7 +21,7 @@ from database.models import (
 class BookingRepository:
     """Operaciones de lectura/escritura para el dominio de reservas."""
 
-    def _init_(self, session: Session) -> None:
+    def __init__(self, session: Session) -> None:
         self.session = session
 
     def list_room_types(self) -> List[RoomType]:
